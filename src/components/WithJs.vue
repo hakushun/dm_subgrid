@@ -8,19 +8,25 @@ const descriptionRefs = ref<HTMLParagraphElement[]>([]);
 const { items, updateItems } = useItems();
 
 function addMarginTop() {
+  // 3つのタイトルの高さを取得
   const titleHeights = titleRefs.value.map((title) => title.clientHeight);
+  // 3つのタイトルの高さで最大の値を取得
   const maxTilteHeight = Math.max(...titleHeights);
+  // 説明に付与するマージントップの値を計算
   const marginTops = titleHeights.map((height) => maxTilteHeight - height);
+  // 説明に付与するマージントップを付与
   descriptionRefs.value.forEach((element, index) => {
     element.style.marginTop = `${marginTops[index]}px`;
   });
 }
 
 onMounted(() => {
+  // マウント時に発火
   addMarginTop();
 });
 
 watch(items, async () => {
+  // itemsを変更を検知し、 DOMの更新処理を待ってから発火
   await nextTick();
   addMarginTop();
 });
@@ -33,7 +39,9 @@ watch(items, async () => {
         <div :class="styles.wrapper">
           <img :src="item.imageSrc" alt="" width="100" height="100" :class="styles.image" />
         </div>
+        <!-- 高さ取得のためrefを付与 -->
         <h2 ref="titleRefs">{{ item.title }}</h2>
+        <!-- マージントップ付与のためrefを付与 -->
         <p :class="styles.description" ref="descriptionRefs">{{ item.description }}</p>
         <div :class="styles.points">
           <span>現在: {{ item.points.asis }}</span>
